@@ -1,0 +1,7 @@
+"id", "name", "description", "price", "taxRate"
+"123", "Soap", "Soap to wash your hands", "299", "19"
+"234", "Milk", "Milk to eat with cereals", "119", "7"
+"345", "Potatoes", "Potatos to cook and eat", "199", "7"
+"456", "Pizza", "Frozen pizza for lazy Sundays", "219", "7"
+"567", "Shirt", "To wear in summer", "999", "19"
+"678", "Lego", "To play with", "2099", "19"
