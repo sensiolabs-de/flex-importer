@@ -15,11 +15,11 @@ This is a small showcase on how to bootstrap a simple product import service wit
 ```bash
 $ composer create-project symfony/skeleton:^4.0@beta flex-importer
 $ cd flex-importer
-$ composer require logger orm 
+$ composer require logger orm
 ```
 
 ![gif](./importer-setup.gif)
-   
+
 ### 2. Configure your database
 
 In this example we are using sqlite
@@ -64,29 +64,29 @@ class Product
      * @ORM\Id
      */
     public $id;
-    
+
     /** @ORM\Column */
     public $name;
- 
+
     /** @ORM\Column(type="text") */
     public $description;
- 
+
     /** @ORM\Column(type="integer") */
     public $price;
- 
+
     /** @ORM\Column(type="integer") */
     public $taxRate;
- 
+
     public static function fromArray(array $data): self
     {
         $instance = new static();
- 
+
         $instance->id = $data['id'];
         $instance->name = $data['name'];
         $instance->description = $data['description'];
         $instance->price = $data['price'];
         $instance->taxRate = $data['taxRate'];
- 
+
         return $instance;
     }
 }
@@ -97,7 +97,7 @@ class Product
 ```bash
 $ bin/console doctrine:schema:update --force
 ```
-       
+
 ### 4. Bootstrap a small cli command as framework code
 
 ```php
@@ -105,14 +105,21 @@ $ bin/console doctrine:schema:update --force
 
 namespace App\Command;
 
+use App\ProductImporter;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
+
 class ProductImportCommand extends Command
 {
     private $productImporter;
- 
+
     public function __construct(ProductImporter $productImporter)
     {
         $this->productImporter = $productImporter;
-        
+
         parent::__construct();
     }
 
@@ -127,16 +134,17 @@ class ProductImportCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $file = $input->getArgument('file');
- 
+
         $io->title('Product Import');
- 
+
         $this->productImporter->importFile($file);
- 
+
         $io->success('Successfully imported products.');
- 
+
         return 0;
     }
 }
+
 ```
 
 ### 5. Implement your import service as domain logic
@@ -151,27 +159,27 @@ use Doctrine\Common\Persistence\ObjectManager;
 class ProductImporter
 {
     private $entityManager;
- 
+
     public function __construct(ObjectManager $entityManager)
     {
         $this->entityManager = $entityManager;
     }
- 
+
     public function importFile(string $file): void
     {
         foreach ($this->readImportFile($file) as $data) {
             $product = Product::fromArray($data);
- 
+
             $this->entityManager->persist($product);
             $this->entityManager->flush();
         }
     }
- 
+
     private function readImportFile(string $file) : \Generator
     {
         $file = new \SplFileObject($file);
         $fields = $file->fgetcsv();
- 
+
         while ($file->valid()) {
             $data = $file->fgetcsv();
             if (count($fields) === count($data)) {
@@ -196,10 +204,10 @@ class ProductImporter
 
 ```bash
 $ bin/console app:product:import products.csv
- 
+
 Product Import
 ==============
- 
+
 [OK] Successfully imported products.
 ```
 
