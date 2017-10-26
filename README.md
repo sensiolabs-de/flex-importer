@@ -50,6 +50,10 @@ More about [Advanced environment variables](https://symfony.com/blog/new-in-symf
 ```php
 // src/Entity/Product.php
 
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
 /**
  * @ORM\Entity
  */
@@ -99,6 +103,8 @@ $ bin/console doctrine:schema:update --force
 ```php
 // src/Command/ProductImportCommand.php
 
+namespace App\Command;
+
 class ProductImportCommand extends Command
 {
     private $productImporter;
@@ -136,6 +142,12 @@ class ProductImportCommand extends Command
 ### 5. Implement your import service as domain logic
 
 ```php
+
+namespace App;
+
+use App\Entity\Product;
+use Doctrine\Common\Persistence\ObjectManager;
+
 class ProductImporter
 {
     private $entityManager;
