@@ -21,8 +21,8 @@ class ProductImporter
             $product = Product::fromArray($data);
 
             $this->entityManager->persist($product);
-            $this->entityManager->flush();
         }
+        $this->entityManager->flush();
     }
 
     private function readImportFile(string $file) : \Generator
